@@ -12,6 +12,11 @@ With enough training data and optimization of the network architecture, a neural
 
 //---------------------------------------------------
 
+LINK OF ZIP WITH IMAGES FOR AI LEARNING: https://github.com/GregVial/CoMNIST/blob/master/images/Cyrillic.zip
+
+//---------------------------------------------------
+
+Then run these images through the following scripts:
 
 CODE FOR AI LEARNING:
 
