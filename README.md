@@ -1,1 +1,389 @@
 # AI_LETTER_RECOGNITION
+
+//-------------------------------------------------
+
+A neural network is an artificial intelligence model inspired by the biological neurons in the human brain. It is capable of learning from data and making predictions or decisions based on that input. 
+
+In the context of recognizing letters from images, a neural network can be trained on a dataset of images containing different letters. The network will learn to extract features from these images and associate them with the corresponding letters. By analyzing the patterns and characteristics of the letters in the images, the neural network can classify and identify the letters accurately.
+
+The process involves feeding the image data into the neural network, which consists of layers of interconnected nodes, or neurons. Each neuron processes the input data and passes it through an activation function to produce an output. As the network is trained on more and more examples, it adjusts the connections between neurons to improve its accuracy in recognizing the letters.
+
+With enough training data and optimization of the network architecture, a neural network can achieve high accuracy in letter recognition tasks. This technology is widely used in optical character recognition (OCR) systems, automated handwriting recognition, and various applications that involve image analysis and text processing.
+
+//---------------------------------------------------
+
+
+CODE FOR AI LEARNING:
+
+#ph_red1.py
+
+import os
+import cv2
+
+def make_background_in_folders(root_folder):
+    # Recursive function to traverse all folders and files inside the root folder
+    def process_folder(folder_path):
+        # Iterate through all items in the current folder
+        for item in os.listdir(folder_path):
+            item_path = os.path.join(folder_path, item)
+            # If it's a folder, call the function recursively
+            if os.path.isdir(item_path):
+                process_folder(item_path)
+            # If it's a file, check if it's an image
+            elif item.endswith('.png') or item.endswith('.jpg') or item.endswith('.jpeg'):
+                file_without_extension = os.path.splitext(item)[0]
+                # Load the image with an alpha channel
+                image = cv2.imread(item_path, cv2.IMREAD_UNCHANGED)
+                # Check if the image is loaded successfully
+                if image is not None:
+                    # If the image has an alpha channel, remove it
+                    if image.shape[-1] == 4:
+                        trans_mask = image[:, :, 3] == 0
+                        image[trans_mask] = [255, 255, 255, 255]
+                        new_img = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
+                        cv2.imwrite(os.path.join(folder_path, file_without_extension + '.png'), new_img)
+                        print(f'{item}\'s alpha channel deleted')
+                    else:
+                        print(f"File '{item}' has no alpha channel, skipping.")
+                else:
+                    print(f"Unable to load file: '{item}'")
+
+    # Start traversal from the root folder
+    process_folder(root_folder)
+
+# Specify the path to the root folder
+root_folder = "Latin"
+make_background_in_folders(root_folder)
+
+
+
+#ph_red2.py
+
+import os
+import cv2
+
+def shift_in_folders(root_folder):
+    # Recursive function to traverse all folders and files inside the root folder
+    def process_folder(folder_path):
+        # Iterate through all items in the current folder
+        for item in os.listdir(folder_path):
+            item_path = os.path.join(folder_path, item)
+            # If it's a folder, call the function recursively
+            if os.path.isdir(item_path):
+                process_folder(item_path)
+            # If it's a file, check if it's an image
+            elif item.endswith('.png') or item.endswith('.jpg') or item.endswith('.jpeg'):
+                file_without_extension = os.path.splitext(item)[0]
+                # Load the image
+                img = cv2.imread(item_path)
+                # Check if the image is loaded successfully
+                if img is not None:
+                    arr_translation = [[15, -15], [-15, 15], [-15, -15], [15, 15]]
+                    arr_caption = ['15-15', '-1515', '-15-15', '1515']
+                    for i in range(4):
+                        # Apply translation to the image
+                        M = np.float32([[1, 0, arr_translation[i][0]], [0, 1, arr_translation[i][1]]])
+                        shifted_img = cv2.warpAffine(img, M, (img.shape[1], img.shape[0]))
+                        cv2.imwrite(os.path.join(folder_path, file_without_extension + arr_caption[i] + '.png'), shifted_img)
+                        print(f'{item} shifted')
+                else:
+                    print(f"Unable to load file: '{item}'")
+
+    # Start traversal from the root folder
+    process_folder(root_folder)
+
+# Specify the path to the root folder
+root_folder = "Latin"
+shift_in_folders(root_folder)
+
+
+#ph_red3.py
+
+import os
+from PIL import Image
+
+def rotate_in_folders(root_folder):
+    # Recursive function to traverse all folders and files inside the root folder
+    def process_folder(folder_path):
+        # Iterate through all items in the current folder
+        for item in os.listdir(folder_path):
+            item_path = os.path.join(folder_path, item)
+            # If it's a folder, call the function recursively
+            if os.path.isdir(item_path):
+                process_folder(item_path)
+            # If it's a file, check if it's an image
+            elif item.endswith('.png') or item.endswith('.jpg') or item.endswith('.jpeg'):
+                file_without_extension = os.path.splitext(item)[0]
+                try:
+                    # Open the image using PIL
+                    img = Image.open(item_path)
+                    # Check if the image is loaded successfully
+                    if img is not None:
+                        # Define rotation angles
+                        angles = [-13, 13]
+                        for angle in angles:
+                            # Rotate the image
+                            rotated_img = img.rotate(angle, resample=Image.BICUBIC, fillcolor=(255, 255, 255))
+                            # Convert the image to RGB mode
+                            rotated_img = rotated_img.convert('RGB')
+                            # Save the rotated image
+                            rotated_img.save(os.path.join(folder_path, file_without_extension + str(angle) + '.png'))
+                            print(f'{item} rotated')
+                    else:
+                        print(f"Unable to load file: '{item}'")
+                except Exception as e:
+                    print(f"Error processing file '{item}': {e}")
+
+    # Start traversal from the root folder
+    process_folder(root_folder)
+
+# Specify the path to the root folder
+root_folder = "Latin"
+rotate_in_folders(root_folder)
+
+
+
+#ph_red4.py
+
+import os
+
+def balancing(root_folder):
+    # Recursive function to traverse all folders and files inside the root folder
+    def process_folder(folder_path):
+        # Get the list of subfolders in the current folder
+        subfolders = [f for f in os.listdir(folder_path) if os.path.isdir(os.path.join(folder_path, f))]
+        # Iterate through all subfolders
+        for subfolder in subfolders:
+            subfolder_path = os.path.join(folder_path, subfolder)
+            # Call the function recursively for each subfolder
+            process_folder(subfolder_path)
+            # Get the list of files in the current subfolder
+            files = [f for f in os.listdir(subfolder_path) if os.path.isfile(os.path.join(subfolder_path, f))]
+            # Define the minimum number of files in subfolders
+            min_value = 6500
+            # If there are more files in the current subfolder than the minimum, delete the excess
+            if len(files) > min_value:
+                # Sort files by creation time
+                files.sort(key=lambda x: os.path.getctime(os.path.join(subfolder_path, x)))
+                # Delete excess files
+                for file_to_remove in files[min_value:]:
+                    os.remove(os.path.join(subfolder_path, file_to_remove))
+
+    # Start traversal from the root folder
+    process_folder(root_folder)
+
+# Specify the path to the root folder
+root_folder = "Latin"
+balancing(root_folder)
+
+
+#ph_red5.py
+
+import os
+import shutil
+import random
+
+
+def move_and_delete(root_folder, destination_folder, portion=0.3):
+    # Create the target folder if it doesn't exist
+    if not os.path.exists(destination_folder):
+        os.makedirs(destination_folder)
+
+    # Iterate through all folders A-Z
+    for letter_folder in os.listdir(root_folder):
+        if letter_folder.isalpha():  # Check if it is a folder with a letter
+            letter_folder_path = os.path.join(root_folder, letter_folder)
+            # Get the list of files in the folder
+            files = [f for f in os.listdir(letter_folder_path) if os.path.isfile(os.path.join(letter_folder_path, f))]
+            # Determine the number of files to move
+            num_to_move = int(len(files) * portion)
+            # Randomly select files to move
+            files_to_move = random.sample(files, num_to_move)
+            # Move the selected files to the target folder
+            for file_to_move in files_to_move:
+                source_file = os.path.join(letter_folder_path, file_to_move)
+                destination_file = os.path.join(destination_folder, letter_folder, file_to_move)
+                # Create a folder for the letter in the target folder if it doesn't exist
+                if not os.path.exists(os.path.join(destination_folder, letter_folder)):
+                    os.makedirs(os.path.join(destination_folder, letter_folder))
+                shutil.move(source_file, destination_file)
+                print(f"{file_to_move} moved")
+
+
+# Specify the path to the root folder containing folders A-Z
+root_folder = "Latin"
+# Specify the path to the target folder where folders A-Z will be moved
+destination_folder = "Latin-test"
+# Specify the portion of files to move (in this case 30%)
+portion = 0.2
+
+move_and_delete(root_folder, destination_folder, portion)
+
+
+#ph_red6.py
+
+import os
+import shutil
+import random
+
+
+def move_and_delete(root_folder, destination_folder, portion=0.3):
+    # Create the target folder if it doesn't exist
+    if not os.path.exists(destination_folder):
+        os.makedirs(destination_folder)
+
+    # Iterate through all folders A-Z
+    for letter_folder in os.listdir(root_folder):
+        if letter_folder.isalpha():  # Check if it is a folder with a letter
+            letter_folder_path = os.path.join(root_folder, letter_folder)
+            # Get the list of files in the folder
+            files = [f for f in os.listdir(letter_folder_path) if os.path.isfile(os.path.join(letter_folder_path, f))]
+            # Determine the number of files to move
+            num_to_move = int(len(files) * portion)
+            # Randomly select files to move
+            files_to_move = random.sample(files, num_to_move)
+            # Move the selected files to the target folder
+            for file_to_move in files_to_move:
+                source_file = os.path.join(letter_folder_path, file_to_move)
+                destination_file = os.path.join(destination_folder, letter_folder, file_to_move)
+                # Create a folder for the letter in the target folder if it doesn't exist
+                if not os.path.exists(os.path.join(destination_folder, letter_folder)):
+                    os.makedirs(os.path.join(destination_folder, letter_folder))
+                shutil.move(source_file, destination_file)
+                print(f"{file_to_move} moved")
+
+
+# Specify the path to the root folder containing folders A-Z
+root_folder = "Latin"
+# Specify the path to the target folder where folders A-Z will be moved
+destination_folder = "Latin-valid"
+# Specify the portion of files to move (in this case 30%)
+portion = 0.1
+
+move_and_delete(root_folder, destination_folder, portion)
+
+
+#ai.py
+
+def print_letter(result):
+    letters = "ABCDEFGHIJKLMNOPQRSTUVWXZY"
+    return letters[result]
+
+
+def predicting(path_to_image):
+    image = keras.preprocessing.image
+    model = keras.models.load_model('model.h5')
+
+    img = image.load_img(path_to_image, target_size=(278, 278))
+    x = image.img_to_array(img)
+    x = np.expand_dims(x, axis=0)
+    images = np.vstack([x])
+    classes = model.predict(images, batch_size=1)
+    result = int(np.argmax(classes))
+    result = print_letter(result)
+    print(result)
+
+#app.py
+
+
+from PyQt5.QtWidgets import QMainWindow, QApplication, QMenu, QMenuBar, QAction, QFileDialog, QPushButton, QTextBrowser
+from PyQt5.QtGui import QIcon, QImage, QPainter, QPen, QBrush
+from PyQt5.QtCore import Qt, QPoint
+import sys
+from PyQt5.QtWidgets import QMainWindow, QTextEdit, QAction, QApplication
+from PyQt5.QtWidgets import (QWidget, QLabel, QLineEdit, QTextEdit, QGridLayout, QApplication)
+import numpy as np
+from tensorflow import keras
+
+
+class Window(QMainWindow):
+    def __init__(self):
+        super().__init__()
+
+        title = "recognition latin letter"
+        top = 200
+        left = 200
+        width = 540
+        height = 340
+
+        self.drawing = False
+        self.brushSize = 8
+        self.brushColor = Qt.black
+        self.lastPoint = QPoint()
+
+        self.image = QImage(278, 278, QImage.Format_RGB32)
+        self.image.fill(Qt.white)
+
+        self.nameLabel = QLabel(self)
+        self.nameLabel.setText('RES:')
+        self.line = QLineEdit(self)
+
+        self.line.move(360, 168)
+        self.line.resize(99, 42)
+        self.nameLabel.move(290, 170)
+
+        prediction_button = QPushButton('RECOGNITION', self)
+        prediction_button.move(290, 30)
+        prediction_button.resize(230, 33)
+        prediction_button.clicked.connect(self.save)
+        prediction_button.clicked.connect(self.predicting)
+
+        clean_button = QPushButton('CLEAN', self)
+        clean_button.move(290, 100)
+        clean_button.resize(230, 33)
+        clean_button.clicked.connect(self.clear)
+
+        self.setWindowTitle(title)
+        self.setGeometry(top, left, width, height)
+
+    def print_letter(self, result):
+        letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        self.line.setText(letters[result])
+        return letters[result]
+
+    def predicting(self):
+        image = keras.preprocessing.image
+        model = keras.models.load_model('model.h5')
+        img = image.load_img('res.jpeg', target_size=(278, 278))
+        x = image.img_to_array(img)
+        x = np.expand_dims(x, axis=0)
+        images = np.vstack([x])
+        classes = model.predict(images, batch_size=1)
+        result = int(np.argmax(classes))
+        self.print_letter(result)
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.drawing = True
+            self.lastPoint = event.pos()
+
+    def mouseMoveEvent(self, event):
+        if (event.buttons() & Qt.LeftButton) & self.drawing:
+            painter = QPainter(self.image)
+            painter.setPen(QPen(self.brushColor, self.brushSize, Qt.SolidLine, Qt.RoundCap, Qt.RoundJoin))
+            painter.drawLine(self.lastPoint, event.pos())
+            self.lastPoint = event.pos()
+            self.update()
+
+    def mouseReleaseEvent(self, event):
+
+        if event.button() == Qt.LeftButton:
+            self.drawing = False
+
+    def paintEvent(self, event):
+        canvasPainter = QPainter(self)
+        canvasPainter.drawImage(0, 0, self.image)
+
+    def save(self):
+        self.image.save('res.jpeg')
+
+    def clear(self):
+        self.image.fill(Qt.white)
+        self.update()
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    window = Window()
+    window.show()
+    app.exec()
