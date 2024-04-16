@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+        <div class="container">
+            <h1>Загрузите изображение для распознавания .jpg/.jpeg/.png</h1>
+            <div id="image-preview-container">
+                <img id="image-preview" src="#" alt="Preview">
+            </div>
+            <form id="upload-form" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="image-upload" class="custom-file-upload btn btn-success">
+                    Выбрать файл
+                </label>
+                <input class="input-file" id="image-upload" type="file" name="image" accept=".jpg, .jpeg, .png" />
+                <br>
+                <button class="sub-button btn btn-success" type="submit">Распознать</button>
+            </form>
+            <div id="prediction_result"></div>
+        </div>
+        <div class="container-text">
+            <h3>Нейросеть для распознавания букв</h3>
+            <p class="main-text">Наша нейросеть для распознавания букв - это инструмент, способный автоматически определять буквы на изображениях. Эта нейросеть обучена анализировать визуальные особенности букв и предсказывать, какие именно буквы содержатся на изображении. Наш продукт является open-source, для того, чтобы получить доступ к коду, необходимо авторизоваться. {% if user.is_authenticated %} <a href="{% static 'ai.txt' %}" target="_blank" rel="noopener noreferrer"><u>Открыть файл</u></a> {% else %} <a href="{% url 'register' %}"><u>Регистрация</u></a> {% endif %}</p>
+            <h3>Как это работает?</h3>
+            <p class="main-text">Когда вы загружаете изображение нашему сервису, наша нейросеть анализирует его и вычисляет вероятности того, что на изображении содержатся различные буквы алфавита. Затем мы предоставляем вам результат в виде вероятной букв.</p>
+            <h3>Конфиденциальность</h3>
+            <p class="main-text">Мы ценим вашу конфиденциальность и гарантируем, что ваши загруженные изображения не будут использоваться для каких-либо других целей, кроме распознавания букв. Ваши данные останутся в безопасности.</p>
+            <h3>Технологии</h3>
+            <p class="main-text">Наша нейросеть построена с использованием передовых методов глубокого обучения и нейронных сетей, что обеспечивает высокую точность распознавания даже на сложных изображениях.</p>
+        </div>
+
+<script>
+        // При загрузке страницы восстановить значение src из localStorage, если оно было сохранено
+        window.addEventListener('DOMContentLoaded', function() {
+            var savedSrc = localStorage.getItem('imageSrc');
+            if (savedSrc) {
+                document.getElementById('image-preview').setAttribute('src', savedSrc);
+            }
+        });
+
+        document.getElementById('image-upload').addEventListener('change', function() {
+            var file = this.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var imagePreview = document.getElementById('image-preview');
+                    imagePreview.setAttribute('src', e.target.result);
+                    localStorage.setItem('imageSrc', e.target.result); // Сохранить src в localStorage
+                }
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('image-preview').removeAttribute('src');
+                localStorage.removeItem('imageSrc'); // Удалить сохраненное значение из localStorage, если файл не выбран
+            }
+        });
+        document.getElementById('upload-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+        fetch('', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Bad Request');
+            }
+            return response.json();
+        })
+        .then(data => {
+                const letterMapping = {
+    0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E',
+    5: 'F', 6: 'G', 7: 'H', 8: 'I', 9: 'J',
+    10: 'K', 11: 'L', 12: 'M', 13: 'N', 14: 'O',
+    15: 'P', 16: 'Q', 17: 'R', 18: 'S', 19: 'T',
+    20: 'V', 21: 'W', 22: 'X', 23: 'Y', 24: 'Z'
+    };
+
+    // Получение предсказанной буквы из объекта соответствия
+    const predictedLetter = letterMapping[data.prediction];
+
+    // Вывод результата
+    document.getElementById('prediction_result').innerText = 'Результат: ' + predictedLetter;
+        })
+        .catch(error => {
+            if (error.message === 'Bad Request') {
+                document.getElementById('prediction_result').innerText = 'Ошибка: Неверный запрос (возможно, изображение устарело, загрузите его снова)';
+            } else {
+                console.error('Ошибка:', error);
+            }
+        });
+    });
+
+        function clearLocalStorage() {
+            localStorage.clear();
+            console.log('LocalStorage очищен.');
+        }
+
+        setInterval(clearLocalStorage, 30 * 60 * 1000);
+</script>
+<script src="static/home_script.js"></script>
+{% endblock %}
