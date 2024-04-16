@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Связаться с нами</h2>
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="mb-3 flex-tags">
+                                {{ form.name.label_tag }}
+                                {{ form.name }}
+                            </div>
+                            <div class="mb-3 flex-tags">
+                                {{ form.email.label_tag }}
+                                {{ form.email }}
+                            </div>
+                            <div class="mb-3">
+                                {{ form.message.label_tag }}
+                                {{ form.message }}
+                            </div>
+                            <button type="submit" class="btn btn-outline-secondary btn-block">Отправить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        <div class="container-text">
+            <h3>Наши контакты</h3>
+            <ul class="main-text">
+                <li><i class="fa-solid fa-phone" style="color: #000000;"></i> +7 (918) 534-63-23</li>
+                <li><i class="fa-solid fa-envelope" style="color: #000000;"></i> balayi@sfedu.ru</li>
+                <li><i class="fa-solid fa-envelope" style="color: #000000;"></i> fisenko@sfedu.ru</li>
+            </ul>
+        </div>
+{% endblock %}

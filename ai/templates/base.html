@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <title>AI | Eclipse</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+        }
+
+        form {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .input-file {
+            display: none;
+        }
+
+        .custom-file-upload {
+            display: inline-block;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+        }
+
+        .sub-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #prediction_result {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+        #image-preview-container {
+            text-align: center; /* Выравнивание содержимого по центру */
+            margin-top: 20px;
+        }
+
+        #image-preview {
+            max-width: 100%;
+            height: auto;
+        }
+        .container-text {
+            padding-left: 28.5%;
+            padding-right: 28.5%;
+        }
+        h3 {
+            text-align: center;
+        }
+        .main-text {
+            text-align: justify;
+        }
+        footer {
+            width: 100%;
+            background-color: #f8f9fa;
+            text-align: center;
+            margin-top: 70px;
+        }
+        .footer-text {
+            margin-bottom: 0;
+            padding-bottom: 10px;
+            padding-top: 10px;
+        }
+        a {
+            color: black;
+        }
+        a:hover {
+            color: grey
+        }
+        .sub-button {
+            margin-top: 3px;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .menu-item {
+            margin: 0 10px;
+        }
+        .nav-link-text {
+            color: black;
+        }
+        .nav-link-text:hover {
+            color: grey;
+            text-decoration: none;
+        }
+        canvas {
+            border: 2px solid #000;
+        }
+        #id_message {
+            width: 320px;
+        }
+        textarea {
+            resize: none;
+        }
+        .flex-tags {
+            display: flex;
+            justify-content: space-around;
+        }
+        label {
+            margin-bottom: 0;
+        }
+        ul {
+            list-style-type: none;
+        }
+        .profile-container {
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .profile-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .layout {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        main {
+            flex-grow: 1;
+        }
+        header {
+            flex-shrink: 0;
+        }
+        footer {
+            flex-shrink: 0;
+        }
+    </style>
+    <script src="https://kit.fontawesome.com/6541b5e2da.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="layout">
+        <header>
+            <div class="menu-item"><a class="nav-link-text" href="{% url 'home' %}">Распознование по фото</a></div>
+            <div class="menu-item"><a class="nav-link-text" href="{% url 'contacts' %}">Контакты</a></div>
+            {% if user.is_authenticated %}
+            <div class="menu-item"><a class="nav-link-text" href="{% url 'profile' slug=request.user.profile.slug %}">Личный кабинет</a></div>
+            {% else %}
+            <div class="menu-item"><a class="nav-link-text" href="{% url 'register' %}">Регистрация</a></div>
+            <div class="menu-item"><a class="nav-link-text" href="{% url 'login' %}">Авторизация</a></div>
+            {% endif %}
+
+        </header>
+
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+
+        <footer>
+            <p class="footer-text">&copy; 2024 Нейросеть для распознавания букв. Все права защищены.<br>Powered by <a href="https://vk.com/pozhilaya_gaubitsa">xzibitum</a> & <a href="https://vk.com/kostet322">jackW</a></p>
+        </footer>
+    </div>
+</body>
+</html>

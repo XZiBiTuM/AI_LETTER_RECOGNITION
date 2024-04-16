@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="profile-container">
+    <img class="profile-image animate__animated animate__fadeIn" id="profile-image" src="{% if profile.avatar %}{{ profile.avatar.url }}{% else %}{% static 'default-avatar.jpg' %}{% endif %}" alt="{{ profile.user.username }}">
+    <h2>Здравствуйте, {{ user.username }}!</h2>
+    <p>Эл. почта: {{ user.email }}</p>
+    <div class="btn-group" role="group">
+        <a href="{% url 'edit_profile' slug=profile.slug %}" class="btn btn-outline-secondary animate__animated animate__fadeIn">Редактировать профиль</a>
+        <a href="{% url 'logout' %}" class="btn btn-outline-secondary animate__animated animate__fadeIn">Выход</a>
+    </div>
+</div>
+{% endblock %}
