@@ -34,4 +34,4 @@ history = model.fit_generator(train_generator,
                            verbose=1,
                            validation_data=validation_generator)
 
-model.save('model.h5')
+model.save('new_model.h5')
